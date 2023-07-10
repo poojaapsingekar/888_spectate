@@ -1,6 +1,6 @@
 from flask_restx import Resource, fields, Namespace
 from flask import request
-from db_models import create_sport, get_sports_with_namelike, get_sports_with_min_active_events
+from db_models import create_sport, get_sports_with_namelike, get_sports_with_min_active_events, edit_sport
 ns = Namespace('Sport APIs', description='CRUD on Sport')
 
 
@@ -9,6 +9,8 @@ sport_slug = fields.String(required=True, description="URL format for the sport 
 sport_active = fields.Boolean(required=True, description="Flag to indicate if a sport is active or not", example=True)
 
 sport_input_model = ns.model('Sport APIs', {'name': sport_name, 'slug': sport_slug, 'active': sport_active})
+
+sport_patch_input_model = ns.model('Sport Patch API', {'name': sport_name, 'new_sport': fields.Nested(sport_input_model)})
 
 
 @ns.route('sport')
@@ -40,5 +42,8 @@ class Sport(Resource):
             return name_like_results
         return [name for name in name_like_results if name in active_event_sport_results]
 
-
-
+    @ns.expect(sport_patch_input_model)
+    def patch(self):
+        name = request.json.get('name')
+        new_sport = request.json.get('new_sport')
+        edit_sport(name, new_sport)
