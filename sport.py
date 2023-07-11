@@ -47,3 +47,4 @@ class Sport(Resource):
         name = request.json.get('name')
         new_sport = request.json.get('new_sport')
         edit_sport(name, new_sport)
+    

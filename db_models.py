@@ -105,6 +105,15 @@ def get_events_with_min_active_selections(threshold):
     return [{'name': selection[0], 'slug': selection[1], 'active': selection[2],'type':selection[3],'sport':selection[4],'status':selection[5],'actual_start':selection[6],'scheduled_start':selection[7]} for selection in selections]
 
 def edit_selection(name,new_selection):
+    """
+    This method is used to edit a selection resource. It takes in the name of the resource which needs to be modified and the new_selection
+    is a selection objects with relevant new fields
+
+    When a selection is set to inactive then we need to edit all the events which map it to the selection need to updated with the number of selections active for that event
+
+    input -> name: str, new_selection: dict
+    output -> dict
+    """
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
     if not new_selection['active']:
