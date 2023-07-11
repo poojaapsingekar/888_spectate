@@ -44,6 +44,9 @@ class Event(Resource):
         'to_datetime': {'in': 'query', 'description': 'Filter to get all the events upto this datetime un UTC', 'default': '2023-07-08 08:16:34.597997', 'required': False},
     },)
     def get(self):
+        """
+        This is a get method for event with name like regex pattern
+        """
         name_like_results = []
         active_selection_event_results = []
         if request.args.get('name_like') is not None:

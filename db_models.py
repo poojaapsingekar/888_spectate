@@ -3,6 +3,10 @@ import psycopg2
 DB_NAME = "888"
 
 def check_if_table_exists(table_name):
+    
+    """
+    This method will connect to the db with the username and the password
+    """
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password=Apooja@96")
     cur = conn.cursor()
     cur.execute("""
@@ -17,7 +21,7 @@ def check_if_table_exists(table_name):
     cur.close()
     return False
 
-
+#The below method will create the sport table in the database
 def create_sport_table():
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
@@ -26,6 +30,7 @@ def create_sport_table():
     conn.close()
     cur.close()
 
+#The below method will create the event table in the database
 def create_event_table():
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
@@ -34,7 +39,7 @@ def create_event_table():
     conn.close()
     cur.close()
 
-
+#The below method will create the selection table in the database
 def create_selection_table():
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
@@ -43,6 +48,7 @@ def create_selection_table():
     conn.close()
     cur.close()
 
+#The below method will insert the values in the sport table in the database
 def create_sport(name, slug, active, num_active_events=0):
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
@@ -52,6 +58,7 @@ def create_sport(name, slug, active, num_active_events=0):
     conn.close()
     cur.close()
 
+#The below method will insert the values in the event table in the database
 def create_event(name,slug,active,type,event_sport,status,scheduled_start,actual_start,num_active_selections=0):
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
@@ -60,6 +67,7 @@ def create_event(name,slug,active,type,event_sport,status,scheduled_start,actual
     conn.close()
     cur.close()
 
+#The below method will insert the values in the selection table in the database
 def create_selection(name,event,price,active,outcome):
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
@@ -68,6 +76,7 @@ def create_selection(name,event,price,active,outcome):
     conn.close()
     cur.close()
 
+#This method is to get the api end points from the sport table
 def get_sports_with_namelike(pattern):
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
@@ -86,6 +95,7 @@ def get_sports_with_min_active_events(threshold):
     cur.close()
     return [{'name': sport[0], 'slug': sport[1], 'active': sport[2]} for sport in sports]
 
+#This method is to get the api end points from the event table
 def get_events_with_name_like(pattern):
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
@@ -132,6 +142,15 @@ def edit_selection(name,new_selection):
     cur.close()
 
 def edit_event(name,new_event):
+    """
+    This method is used to edit a event resource. It takes in the name of the resource which needs to be modified and the new_event
+    is a event objects with relevant new fields
+
+    When a event is set to inactive then we need to edit all the events which map it to the event need to updated with the number of events active for that event
+
+    input -> name: str, new_selection: dict
+    output -> dict
+    """
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
     if not new_event['active']:
@@ -160,7 +179,7 @@ def edit_sport(name,new_sport):
     cur.close()
 
 
-
+#This method is to get the api end points from the selection table
 def get_selections_with_name_like(pattern):
     conn = psycopg2.connect(f"dbname='{DB_NAME}' user=postgres password='Apooja@96'")
     cur = conn.cursor()
@@ -170,7 +189,7 @@ def get_selections_with_name_like(pattern):
     cur.close()
     return [{'name':selection[0],'event':selection[1],'price':selection[2],'active':selection[3],'outcome':selection[4]} for selection in selections]
 
-
+#Check if the table exisits then only create the sport table
 if not check_if_table_exists("sport"):
     create_sport_table()
 if not check_if_table_exists("event"):

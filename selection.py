@@ -5,7 +5,6 @@ from event import event_input_model
 
 ns = Namespace('Selection APIs', description='CRUD on selection')
 
-
 selection_name = fields.String(required=True, description="Name indicating the event", example="football")
 selection_event = fields.Nested(event_input_model)
 selection_price = fields.Float(required=True, description="Price of the selection", example=12.5)
@@ -16,6 +15,8 @@ selection_input_model = ns.model('Selection APIs', {'name': selection_name, 'sel
 
 selection_patch_input_model = ns.model('Selection PATCH API', {'name': selection_name, 'new_selection': fields.Nested(selection_input_model)})
 
+
+#The below method is to allocate the  resource
 @ns.route('selection')
 class Selection(Resource):
     @ns.expect(selection_input_model)
@@ -32,11 +33,16 @@ class Selection(Resource):
         'name_like': {'in': 'query', 'description': 'Regular Expression to match the event name', 'default': r'ck|ba', 'required': False},
     },)
     def get(self):
+        """
+        This is a get method for selections with name like regex pattern
+        """
         selections = []
         if request.args.get('name_like'):
             name_like = request.args.get('name_like')
             selections = get_selections_with_name_like(name_like)
         return selections
+
+
 
     @ns.expect(selection_patch_input_model)
     def patch(self):

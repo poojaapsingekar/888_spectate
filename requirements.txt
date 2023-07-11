@@ -1,0 +1,5 @@
+#Requirements to run this application:
+
+Flask==2.0.1
+flask-restx==0.3.9
+psycopg2
