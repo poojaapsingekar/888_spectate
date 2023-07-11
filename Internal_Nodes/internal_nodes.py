@@ -13,5 +13,8 @@ def find_internal_nodes_num(tree):
 
     return count
 
-my_tree = [4, 4, 1, 5, -1, 4, 5]
-print(find_internal_nodes_num(my_tree))
+
+
+if __name__=='__main__':
+    my_tree = [4, 4, 1, 5, -1, 4, 5]
+    print(find_internal_nodes_num(my_tree))

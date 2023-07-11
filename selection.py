@@ -1,6 +1,6 @@
 from flask_restx import Resource, fields, Namespace
 from flask import request
-
+from db_models import create_selection, edit_selection, get_selections_with_name_like
 from event import event_input_model
 
 ns = Namespace('Selection APIs', description='CRUD on selection')
@@ -14,6 +14,7 @@ selection_outcome = fields.String(required=True, description="Selection outcome"
 
 selection_input_model = ns.model('Selection APIs', {'name': selection_name, 'selection_event': selection_event, 'selection_price': selection_price, 'selection_active': selection_active, 'selection_outcome': selection_outcome})
 
+selection_patch_input_model = ns.model('Selection PATCH API', {'name': selection_name, 'new_selection': fields.Nested(selection_input_model)})
 
 @ns.route('selection')
 class Selection(Resource):
@@ -24,14 +25,24 @@ class Selection(Resource):
         price = request.json.get('selection_price')
         active = request.json.get('selection_active')
         outcome = request.json.get('selection_outcome')
+        _ = create_selection(name, event, price, active, outcome)
         return {'name': name, 'event': event, 'price': price, 'active': active, 'outcome': outcome}
 
     @ns.doc(params={
         'name_like': {'in': 'query', 'description': 'Regular Expression to match the event name', 'default': r'ck|ba', 'required': False},
     },)
     def get(self):
-        print (request.args.get('name_like'))
-        return [{'name': 'blah', 'slug': 'foo/baar', 'active': False}]
+        selections = []
+        if request.args.get('name_like'):
+            name_like = request.args.get('name_like')
+            selections = get_selections_with_name_like(name_like)
+        return selections
+
+    @ns.expect(selection_patch_input_model)
+    def patch(self):
+        name = request.json.get('name')
+        new_selection = request.json.get('new_selection')
+        edit_selection(name, new_selection)
 
 
 
